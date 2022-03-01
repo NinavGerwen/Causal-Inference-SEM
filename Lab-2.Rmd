@@ -1,0 +1,54 @@
+---
+title: "Causal Inference - Lab 2"
+author: "Nina van Gerwen (1860852)"
+date: "3/1/2022"
+output: pdf_document
+---
+
+## Part 1: Data and Packages
+
+```{r}
+library(tableone)
+library(MatchIt)
+library(survey)
+
+df <- read.table("SchaferKangData.dat", header = TRUE)
+
+str(df)
+```
+
+## Part 2: Prima Facie Effect
+
+### 2.1: Comparing Means
+
+Prima Facie Effect is simply the difference in means not taking into account any
+covariates. For example through a *t-test*. 
+
+```{r}
+t.test(DISTR.2 ~ DIET , data = df)
+```
+
+### 2.2: Investigating covariates - potential confounding
+
+If there is no confounding, there should be no differences between the two 
+groups on the covariates. We can calculate this:
+
+```{r}
+df1 <- df[ which(df$DIET == 1), ]
+df0 <- df[ which(df$DIET == 0), ]
+
+(mean(df1$DISTR.1) - mean(df0$DISTR.1))/(sqrt( (var(df1$DISTR.1)+var(df0$DISTR.1))/2 )) 
+```
+Or we can create a table through the tableone package:
+
+```{r}
+table1 <- CreateTableOne(vars=c("DISTR.1","BLACK", "NBHISP", "GRADE",
+                      "SLFHLTH", "SLFWGHT", "WORKHARD", "GOODQUAL", 
+                          "PHYSFIT", "PROUD", "LIKESLF", "ACCEPTED", 
+                      "FEELLOVD"), strata="DIET", data=df, 
+                        test=FALSE)
+print(table1, smd = TRUE)
+```
+
+
+
