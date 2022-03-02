@@ -15,6 +15,10 @@ library(survey)
 df <- read.table("SchaferKangData.dat", header = TRUE)
 
 str(df)
+
+df$BLACK <- as.factor(df$BLACK)
+df$NBHISP <- as.factor(df$NBHISP)
+df$DIET <- as.factor(df$DIET)
 ```
 
 ## Part 2: Prima Facie Effect
@@ -39,6 +43,7 @@ df0 <- df[ which(df$DIET == 0), ]
 
 (mean(df1$DISTR.1) - mean(df0$DISTR.1))/(sqrt( (var(df1$DISTR.1)+var(df0$DISTR.1))/2 )) 
 ```
+
 Or we can create a table through the tableone package:
 
 ```{r}
@@ -49,6 +54,274 @@ table1 <- CreateTableOne(vars=c("DISTR.1","BLACK", "NBHISP", "GRADE",
                         test=FALSE)
 print(table1, smd = TRUE)
 ```
+
+
+## Part 3: Controlling for Confounders by modeling the relation of Z with Y
+
+### 3.1: Method 2: ANCOVA
+
+We assume all covariates are possible confounders and run an ANCOVA including 
+all the covariates.
+
+```{r}
+summary(glm(DISTR.2 ~ DIET + DISTR.1 + BLACK + NBHISP + GRADE + SLFHLTH + 
+              SLFWGHT + WORKHARD + GOODQUAL + PHYSFIT + PROUD +
+              LIKESLF + ACCEPTED + FEELLOVD, data = df))
+```
+### 3.2: Method 3: Regression
+
+If you do not choose to do an ANOVA, but simply a regression.
+You can now include terms such as interactions or quadratic covariate terms.
+
+However, for the interaction terms, it is important to center the numeric
+variables. 
+
+### 3.3: Method 4: Regression *Estimation*
+
+In regression estimation, you make predictions of the potential outcomes
+that were not observed and then use these to calculate the average causal 
+effect. 
+
+```{r}
+## First, divide the data set into treated vs non treated
+
+df0 <- subset(df, DIET == 0)
+df1 <- subset(df, DIET == 1)
+
+## Then get predicted values for distr.2 for both groups
+
+M3.0 <- glm(DISTR.2 ~ DISTR.1 + BLACK + NBHISP + GRADE + SLFHLTH + 
+              SLFWGHT + WORKHARD + GOODQUAL + PHYSFIT + PROUD +
+              LIKESLF + ACCEPTED + FEELLOVD, data = df0)
+
+M3.1 <- glm(DISTR.2 ~ DISTR.1 + BLACK + NBHISP + GRADE + SLFHLTH + 
+              SLFWGHT + WORKHARD + GOODQUAL + PHYSFIT + PROUD +
+              LIKESLF + ACCEPTED + FEELLOVD, data = df1)
+
+# Obtain a prediction for the outcome using all the cases, based on 
+# the parameter estimates obtained above and saved in M3.1:
+M3.est.Y1 <- predict(M3.1, newdata = df)
+
+# Do the same, but now with the parameters saved in M3.0:
+M3.est.Y0 <- predict(M3.0, newdata = df)
+
+## Finally, estimate the average causal effect with a paired t.test
+t.test(M3.est.Y0, M3.est.Y1, paired = TRUE, alternative = "two.sided")
+
+## OPTIONAL --------------------------------------------------------------------
+
+## Using the observed values where available
+
+# Take the predicted potential outcome for X=0
+# and only for those for whom we observed X=0
+# do we overwrite the predicted potential outcome
+M3b.Y0 <- M3.est.Y0
+M3b.Y0[df$DIET==0] <- df$DISTR.2[df$DIET==0]
+
+# Do the same for the predicted potential outcome for X=1
+M3b.Y1 <- M3.est.Y1
+M3b.Y1[df$DIET==1] <- df$DISTR.2[df$DIET==1]
+
+# Now do the t-test with these (observed and predicted) potential outcomes:
+t.test(M3b.Y0, M3b.Y1, paired = TRUE, alternative = "two.sided")
+```
+Implementing the observed values again, the results are suddenly not 
+significant! 
+
+### 3.4: Conclusion
+
+Extrapolation is a problem for physfit, likeslf and slfwght.
+
+## Part 4: Controlling for confounders by modeling the relation of Z with X
+
+### Estimating the propensity scores
+
+You can gain propensity scores by running a logistic regression where
+X is now the dependent variable (i.e., DIET).
+
+```{r}
+# Run the logistic regression analysis
+logreg <- glm(DIET ~ DISTR.1 + as.factor(BLACK) + as.factor(NBHISP) 
+                    + GRADE + SLFHLTH + SLFWGHT + WORKHARD + GOODQUAL 
+                        + PHYSFIT + PROUD + LIKESLF + ACCEPTED + FEELLOVD, 
+                    family = binomial(), data = df)
+
+# Obtain a prediction of the probability of treatment (i.e., DIET=1) 
+ps <- predict(logreg, type = "response")
+
+# Add this predicted probability to the datafile
+df$ps <- as.numeric(ps)
+
+# Look at the datafile 
+round(df[1:10,], 2)
+```
+Now, we should check whether propensity scores are evenly distributed
+in the two different groups through a histogram.
+
+```{r}
+df1 <- df[ which(df$DIET == 1), ]
+df0 <- df[ which(df$DIET == 0), ]
+
+# Create histograms, then plot one and add the other: 
+hist0 <- hist(df0$ps, breaks=30, plot=FALSE)
+hist1 <- hist(df1$ps, breaks=30, plot=FALSE)
+plot( hist0, col=rgb(0,0,1,1/4), xlim=c(0,1), 
+        xlab="Propensity score", 
+      main="Histogram of propensity scores")  
+plot( hist1, col=rgb(1,0,0,1/4), xlim=c(0,1), add=T) 
+```
+The distribution looks good! They seem to cover the same range and overlap.
+
+### Method 4.2: *Matching*
+
+Here, we will try to find people form both groups that have similar
+propensity scores and match them with one another. 
+
+This is done through the matchit() function.
+```{r}
+matchdat <- matchit(DIET ~ DISTR.1 + as.factor(BLACK) + as.factor(NBHISP) 
+            + GRADE + SLFHLTH + SLFWGHT + WORKHARD + GOODQUAL 
+            + PHYSFIT + PROUD + LIKESLF + ACCEPTED + FEELLOVD, 
+        method = "nearest",  data = df)
+
+matchdat
+summary(matchdat)
+```
+This seems to work well. Important to note is that we now only have 2440
+observations left as the smallest group only had 1220 observations and they
+were all matched 1 to 1 with someone in the larger group.
+
+All standardized mean differences are now smaller than 0.1. So the matching
+worked well!
+
+We can also look at some distributions of the matched data.
+
+```{r}
+plot(matchdat,type="jitter")
+
+plot(matchdat,type="hist")
+```
+
+Knowing the matching went well, we can now calculate the average causal effect
+with a t.test on the matched data
+
+```{r}
+## First get the matched data set
+
+df.match <- match.data(matchdat)
+
+## Then t-test!
+t.test2 <- t.test(DISTR.2 ~ DIET, df.match)
+
+## And to get the SMD
+t.test2$estimate[2] - t.test2$estimate[1]
+
+```
+The reason this is an estimate of ACE1, is because we matched the units from
+DIET == 0 to the units from DIET == 1. So we match based on the characteristics
+of the group DIET == 1, and it is possible this ignores some characteristics
+from the other group. Hence, it is more an estimate of ACE1
+(It would have been ACE0 had we matched the other way around).
+
+### Method 5: Inverse Probability Weighting (IPW)
+
+In inverse probability weighting, we take the inverse of the propensity scores
+and use these as weights. Then we calculate the ACE through the following
+formula:
+
+$$ \frac{\sum_i x_iy_i/\pi_i}{\sum_ix_i/\pi_i} - \frac{\sum(1-x_i)y_i/(1-\pi_i)}{\sum_i(1-x_i)/(1-\pi_i)} $$
+where \pi = the propensity score.
+
+```{r}
+Y <- df$DISTR.2
+X <- df$DIET
+mu1hat <- sum( X*Y/ps ) / sum(X/ps)
+mu0hat <- sum( (1-X)*Y/(1-ps) ) / sum((1-X)/(1-ps))
+mu1hat - mu0hat
+```
+Disadvantage: you only get a point estimate and getting a confidence
+interval is tough. However, you can use the survey package to get one.
+
+### Method 4.4: *Subclassification/Stratification*
+
+Here, you create strata based on propensity scores. The idea is that
+individuals within these strata are similar in regards to propensity scores.
+Then getting the ACE for each strata, you can average these and get a good
+estimate of the true ACE.
+
+```{r}
+## First create 5 strata that each hold 20% of observations
+df$stratum <- cut(df$ps, 
+                    breaks=c(quantile(df$ps, probs=seq(0,1,0.2))),
+                    labels=seq(1:5),
+                    include.lowest=TRUE)
+
+# We can also make a plot of these quantiles; this is based on
+# using the same histrogram we had before, now adding vertical 
+# lines for where the breaks of the strat are.
+
+plot( hist0, col=rgb(0,0,1,1/4), xlim=c(0,1), 
+    xlab="Propensity score", main="Histogram of propensity scores \nwith quantile breaks")  
+plot( hist1, col=rgb(1,0,0,1/4), xlim=c(0,1), add=T) 
+
+br <- c(quantile(df$ps, probs=seq(0,1,0.2)))
+
+abline(v=br[2],col="black",lwd=3)
+abline(v=br[3],col="black",lwd=3)
+abline(v=br[4],col="black",lwd=3)
+abline(v=br[5],col="black",lwd=3)
+```
+Looking at the plots, we can see that the last stratum is very wide. You
+can divide this further up. But I will refrain from doing so.
+
+Now to compute the ACE in each stratum:
+
+```{r}
+results <- matrix(NA,5,1)
+
+for (quintiles in c(1:5)) {
+  t.test3 <- t.test(DISTR.2 ~ DIET, data = df[which(df$stratum==quintiles),])
+  print(t.test3)
+  # Difference in means:
+  results[quintiles,1] <- t.test3$estimate[2] - t.test3$estimate[1]
+}
+```
+
+And to get the final ACE:
+
+```{r}
+mean(results)
+```
+### Conclusion
+
+These methods are also an option! They all work through the use of propensity 
+scores and try to mimic a RCT.
+
+## Part 5: Overall Conclusion
+
+There are many options and choosing the right one can be very difficult.
+Furthermore, in all the methods you can also further change certain things.
+
+In the ANCOVA and regression estimation procedures (Methods 2 and 3), we can add 
+interactions and non-linear effects, for instance through using spline fitting. 
+In all the other techniques that are based on propensity scores, we can also 
+consider interactions and non-linear effects of covariates when predicting the 
+log odds. Moreover, when using matching techniques (Method 4), we can choose to 
+have more than one match per person, and we can choose between matching with or 
+without replacement. In inverse probability weigthing (Method 5), we can decide 
+to standardize the weights or not, and there are different ways to handle 
+outliers. For subclassification (Method 6), we have to decide how many strata to
+create, and whether to further subdivide wide strata or not. The final category 
+of techniques discussed by S&K that we did not cover (Methods 7, 8, and 9), is 
+based on combinations of the other techniques, and therefor allow for even more 
+researchers degrees of freedom.
+
+These can all lead to different results and it can all be a pain in the ass.
+Also all methods still have assumptions (such as no unobserved confounding).
+
+
+
+
 
 
 
