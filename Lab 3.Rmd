@@ -1,0 +1,448 @@
+---
+title: "Lab 3 - Casusal Inference"
+author: "Nina van Gerwen"
+date: "3/16/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Part 1: Simpson's and Berkson's Paradox, Selection Bias
+
+```{r}
+load('dataEx1Lab3.Rdata')
+```
+
+The most likely DAG in my opinion would be that both hours studied and IQ
+affect study success.
+
+### 1.1 Simpson's Paradox
+
+```{r}
+studyh_marg <- lm(studyhours~IQ,data=study_succes_data)
+summary(studyh_marg)
+```
+
+The estimates can be interpreted as follows: on average, people study about
+30 hours (the intercept - which approaches the mean) and for every extra point
+in IQ, your hours studied on average diminishes by -0.008. However, because it 
+is not significant and very close to 0, you would probably say that IQ
+has no effect on hours studied.
+
+```{r}
+studyh_cond <- lm(studyhours~IQ+studysucces,data=study_succes_data)
+summary(studyh_cond)
+```
+
+Now, the regression coefficients are interpreted differently. When all scores
+are 0, you study -3.26 hours (However, this never happens as you can't have 0 IQ).
+So for every point in studysucces you gain while static on IQ, you study 0.5 hour more.
+Furthermore, for every point in IQ, you study .11 hours less.
+
+We find that there is a conditional relation between IQ and hours studied when
+conditioning on study success, so study success has to be a collider.
+
+### 1.2 Berkson's Bias
+
+```{r}
+hist(study_succes_data$studysucces)
+abline(v=95, col="red", lwd=3)
+
+honors_data = study_succes_data[which(study_succes_data$studysucces>95),]
+
+studyh_honors <- lm(studyhours~IQ,data=honors_data)
+summary(studyh_honors)
+```
+
+When looking at the marginal relation between IQ and hours studied again in
+the subset of high scorers, we find that now they are marginally dependent
+instead of independent. 
+
+This might be becauses there is selection bias, we only choose people who scored
+high instead of everyone.
+
+### 1.3 Visualization
+
+```{r}
+plot(study_succes_data$IQ, study_succes_data$studyhours, main = "Relatioship IQ and Study Success", ylab="Study Succes", xlab="IQ", pch=19, col="grey15")
+abline(a = studyh_marg$coefficients[1] , b = studyh_marg$coefficients[2], col = "black",lwd=3)
+
+points(honors_data$IQ, honors_data$studyhours, pch=8,col="blue",cex=1.2)
+abline(a = studyh_honors $coefficients[1] , b = studyh_honors $coefficients[2], col = "blue", lwd=2)
+```
+In the plot you can see that in the whole population, there is a horizontal
+relation between IQ and hours studied (i.e., no relation). Whereas in the
+high scorers group, there is a slightly negative relation. This shows that
+the selection of your sample is very important.
+
+### 1.4 True Average Causal Effect
+
+```{r}
+set.seed(113221701) # set the seed for comparison
+n <- 600          # total sample size
+IQ <- rnorm(n,115,7)
+studyhours<- rnorm(n,30,5)
+studysucces<- 25 + .25*IQ + 1.25*studyhours + rnorm(n,0,5)
+```
+
+The true causal effect of IQ on hours studied can be gained through 
+mimicking an intervention. We will first set IQ to 1, then calculate the average
+study hours, then set IQ to 0 and calculate average study hours. Finally we take
+the difference betweent hese two average study hours.
+
+```{r}
+IQ <- 1
+EVstudyhours_IQ1 <- 30
+EVstudysucces <- 25 + .25*IQ + 1.25*EVstudyhours_IQ1 
+
+###IQ set to 1###
+IQ <- 0
+EVstudyhours_IQ0<- 30
+EVstudysucces <- 25 + .25*IQ + 1.25*EVstudyhours_IQ0 
+
+EVstudyhours_IQ1-EVstudyhours_IQ0
+```
+
+## 1.2 Observational Data 2
+
+The most reasonable DAG would be the one where kidney stone size is a confounder.
+
+```{r}
+library(dagitty)
+library(ggdag)
+library(qgraph)
+
+kiddag <- dagify(
+  TR ~ KSz,
+  HP ~ TR + KSz,
+  exposure = "TR",
+  outcome = "HP"
+)
+
+ggdag_status(kiddag) + theme_dag()
+```
+```{r}
+wellb_marg <- lm(wellbeing~treatment,data=kidneystone_data)
+summary(wellb_marg)
+
+wellb_cond <- lm(wellbeing~treatment+stonesize,data=kidneystone_data)
+summary(wellb_cond)
+```
+So, what we see here is that, in a marginal relation between treatment and
+wellbeing, the effect of treatment on health is negative. Whereas 
+conditional on kidney stone size, treatment has a positive effect on health!
+So the effect of treatment turned around when controlling on KSz.
+
+### 1.2.2 Visualization
+
+```{r}
+library(ggplot2)
+library(viridis)
+# Gradient color
+ggplot(kidneystone_data, aes(x = treatment, y = wellbeing, colour = stonesize)) +
+  geom_point()+
+  scale_color_viridis(option = "C")
+```
+In the plot, we can see that conditioning on kidney size, the effect of
+treatment becomes positive, whereas otherwise it is negative.
+
+### 1.2.3: The True Average Causal Effect
+
+```{r}
+set.seed(133222032) # set the seed for comparison
+n <- 500          # total sample size
+stonesize <- rnorm(n,8,2) # averge stone size of 8 mm (yikes)
+treatment=rep(0,n)
+treatment[which(stonesize>9)] <- 1  #Treatment is assigned deterministically (no probability involved here) completely based on stone size. People with large stones (>9) get treatment '1'.
+wellbeing <- 30 + 2*treatment - 2*stonesize + rnorm(n,0,1) 
+```
+
+Again, we mimic an intervention but this time with intervention.
+
+```{r}
+## treatment = 1
+stonesize_Average = 8
+treatment = 1
+wellbeing_treat1 <- 30 + 2*treatment - 2*stonesize_Average
+
+## treatment = 1
+treatment = 0
+wellbeing_treat0 <- 30 + 2*treatment - 2*stonesize_Average
+
+wellbeing_treat1 - wellbeing_treat0
+```
+
+The true causal effect of treatment on wellbeing, conditional on stonesize is 2!
+So your wellbeing will increase if you get the treatment.
+
+## 1.3 Observational Data 3: Does length matter?
+
+The DAG would be one where bloom atractiveness is a mediator.
+
+```{r}
+flowerdag <- dagify(
+  PR ~ SL + BA,
+  BA ~ SL,
+  exposure = "SL",
+  outcome = "PR"
+)
+
+ggdag_status(flowerdag) + theme_dag()
+```
+
+### 1.3.1 Simpson's or Berkson's Bias
+
+```{r}
+pollen_marg <- lm(pollen~sepal_length,data=pollen_data)
+summary(pollen_marg)
+
+pollen_cond <- lm(pollen~sepal_length+bloom_attract,data=pollen_data)
+summary(pollen_cond)
+```
+We find that sepal length affects pollen received. But we also find that sepal length
+affects pollen received conditioned on bloom attractiveness. However,
+the effects do differ! Marginal dependencies =/= Conditional dependencies.
+
+### 1.3.3 True average causal effect
+
+```{r}
+set.seed(133222058) # set the seed for comparison
+n <- 500          # total sample size
+sepal_length <- rnorm(n,5,1)
+bloom_attract= 25+5*sepal_length + rnorm(n,0,5)
+pollen <- 0 + .02*bloom_attract + .01*sepal_length + rnorm(n,0,.05)
+```
+
+We mimic an intervention.
+
+```{r}
+## sepal length is 1
+sepal_length <- 1
+bloom_attract <- 25+5*sepal_length
+pollen1 <- 0 + .02 * bloom_attract + .01 * sepal_length
+
+## sepal length is 0
+sepal_length <- 0
+bloom_attract <- 25+5*sepal_length
+pollen0 <- 0 + .02 * bloom_attract + .01 * sepal_length
+
+pollen1 - pollen0
+```
+The true average causal effect of sepal length on pollen received is 0.11!
+
+## Part 2: Controlling for pretest, ANCOVA, Change scores
+
+### 2.1 RCT
+
+```{r}
+set.seed(482) # set the seed for comparison
+
+N <- 500          # total sample size
+
+# For Y1
+mY1 <- 115    # mean on pretest
+sdY1 <- 20    # sd on pretest
+Y1 <- rnorm(N,mY1,sdY1)   # simulate Y1
+
+# For X
+X <- rbinom(N,1,0.5)      # simulate treatment
+
+# For Y2
+b0 <- 70          # intercept
+b1 <- 20          # causal effect       
+b2 <- .4          # covariate effect
+sdE2 <- 5         # within-group residual sd
+Y2 <- b0 + b1*X + b2*Y1 + rnorm(N,0,sdE2)
+
+dat1 <- data.frame(Y1,Y2,X)
+```
+
+```{r}
+round(cor(dat1),3)
+```
+
+Looking at the correlations, we see that Y1 has no correlation with X. This means
+that treatment assignment of X is independent of your pretest score!
+But Y1 and Y2 are related, as you would expect.
+
+```{r}
+# For plotting it may be useful to find the overall minimum 
+# and maximum across the pretest and posttest, to make the two
+# axes comparable
+minY <- min(c(Y1,Y2))
+maxY <- max(c(Y1,Y2))
+
+plot(x=dat1$Y1, y=dat1$Y2, col = (dat1$X+1),
+        xlim=c(minY,maxY),ylim=c(minY,maxY),
+        xlab="Y1", ylab="Y2")
+```
+The causal effect is reflected in the graph in the average difference between
+the red dots and the black dots! (i.e., the difference in the two groups)
+
+```{r}
+# Means of:
+# - pretest non-treatment group (mY10)
+# - pretest treatment group (mY11)
+# Note that both should be  about mY1=115 (value used in simulation)
+mY10 <- mean(Y1[X==0]) 
+mY11 <- mean(Y1[X==1]) 
+
+# Means of:
+# - posttest non-treatement group (mY20)
+# - posttest treatment group (mY21)
+# Note that the first should be about:
+# mY20 = b0 + b2*mY10 = 70 + 0.4*115 = 116
+# and the second should be about:
+# mY21 = b0 + b1 + b2*mY11 = 70 + 20 + 0.4*115 = 136
+mY20 <- mean(Y2[X==0]) 
+mY21 <- mean(Y2[X==1]) 
+
+# Gather means on both occasions per treatment condition
+mYX0 <- c(mY10,mY20)
+mYX1 <- c(mY11,mY21)
+
+minY <- min(mYX0,mYX1)
+maxY <- max(mYX0,mYX1)
+
+plot(c(1,2), mYX0, type="l", 
+            xlim=c(0.7,2.3),
+            ylim=c(minY-5,maxY+5),xaxt="n",
+            xlab="time",
+            ylab="Y")
+lines(c(1,2),mYX1,col="red")
+points(c(1,2),mYX1,pch=19,cex=1.3,col="red")
+points(c(1,2),mYX0,pch=19,cex=1.3)
+axis(side=1, at=seq(1, 2, by=1))
+```
+This plot shows that, although there was no difference in t = 1 between the
+two groups, there was a difference in t = 2. So a change score analysis could be used also
+to find a causal effect of treatment.
+
+### 2.1.3 Analyzing the data
+
+```{r}
+ANCOVA <- lm(Y2 ~ X + Y1, data=dat1)
+summary(ANCOVA)
+
+CSA <- lm((Y2-Y1) ~ X, data=dat1)
+summary(CSA)
+
+Y2onX <- lm((Y2) ~ X, data=dat1)
+summary(Y2onX)
+```
+
+### 2.1.4 Conclusions
+
+We find that all models find somewhat similar results (although very small differences)
+and they would all lead to the same conclusion.
+This is because pretest and X were independent of one another due to the nature of RCT!
+
+## 2.2 Existing treatment groups
+
+If there are pre-existing treatment groups (e.g., boys and girls), it could be 
+the case that pretest scores are related to treatment (e.g., girls more likely to choose treatment).
+
+Important to note is when this is the case, a change score analysis will be biased.
+This is because X is related to the pretest scores (i.e., it is a confounder) 
+and by not controlling on it you are introducing bias. Hence, you might get a 
+different conclusion.
+
+## 2.3 Assignment excluding based on pre-test
+
+Here, treatment is exclusively based on your pre-test score and pre-test scores
+once again act as a confounder. So the same results as from 2.2 will apply here,
+where a change score analysis should not be used as it introduces bias.
+
+## 2.4 Assignment partly based on pre-test
+
+When treatment is partly based on your pre-test scores, they can still act 
+as a confounder. Hence, a change score analysis will still give different
+results and can introduce bias. 
+
+## 2.5 Overall conclusion
+
+If your pretest scores are ever related to your treatment, you should never use
+a change score analysis!
+
+## Part 3: Changes Scores & Unobserved Time-Invariant Confounding
+
+When there is time-invariant confounding (unobserved), a change score
+analysis can completely get rid of bias whereas an ANCOVA approach can only
+partly do so, given that we have a proxy of that unobserved confounder and the
+betas are the same. 
+
+### 3.1 Simulating data
+
+```{r}
+set.seed(934) # set the seed for comparison
+N <- 5000 # sample size
+U <- rnorm(N)  # Unmeasured time-invariant confounder
+
+# Create a treatment variable that is dependent on the unmeasured confounder
+z <- -1.1*(U)           # linear combination with noise
+pr <- 1/(1+exp(-z))               # pass through an inv-logit function
+X <- rbinom(N,1,pr)               # bernoulli treatment variable
+cor(X,U)                        # check the correlation
+
+# Create the pre-test and the post-test
+Y1 <- 10 + 0.7*U + rnorm(N)
+Y2 <- 11 + 0.7*U + 0.5*X + rnorm(N)
+
+dat5 <- data.frame(U,X,Y1,Y2)
+round(cor(dat5),2)
+
+# Create the pre-test and the post-test
+Y1 <- 10 + 0.7*U + rnorm(N)
+Y2 <- 11 + 0.7*U + 0.5*X + rnorm(N)
+
+dat5 <- data.frame(U,X,Y1,Y2)
+round(cor(dat5),2)
+```
+The size of the effect of X on Y is 0.5, whereas the size of the backdoor path is 0.7.
+
+So if you forget to account for the backdoor path, you might not find a significant
+result (or even a negative effect of X on Y). 
+Because U and X are negatively correlated and the confounder might cancel it out or even turn it negative.
+
+### 3.2 Analyzing data
+
+```{r}
+## Marginal model:
+Y2onX <- lm(Y2 ~ X, data=dat5)
+summary(Y2onX)
+
+## ANCOVA model:
+ANCOVA <- lm(Y2 ~ X + Y1, data=dat5)
+summary(ANCOVA)
+
+## CS model:
+CSA <- lm((Y2-Y1) ~ X, data=dat5)
+summary(CSA)
+
+```
+
+As expected, we find a negative marginal relation between X and Y, when
+the true effect is positive and 0.5.
+
+However, the ANCOVA model also gives an estimate of the true causal effect, that
+while it has the right direction, it is still far of (0.09 instead of 0.50).
+
+This is because the ANCOVA model only partly gets rid of the bias that is 
+caused by the unobserved confounder.
+
+The Change Score Analysis, instead, gets a very good estimate of the true effect
+(0.54). This is because the change score analysis can completely get rid of 
+the bias that is caused by the unobserved confounder given the assumption that
+the betas of U on Y1 and Y2 are the same. 
+
+## 3.3 Conclusion
+
+We have seen that in this scenario, the marginal model (regressing Y2 on X) leads to a biased estimated of the causal effect of X on Y2, as it does not account for the backdoor path X <- U -> Y2.
+
+We have also seen that including Y1 as a proxy of the unmeasured confounder (regressing Y2 on X and Y1; i.e., ANCOVA), only partly removes this effect.
+
+Here, using a chance score model (regression of gain score Y2-Y1 on X) leads to an unbiased estimate, as the two backdoor paths from X to the gain score G cancel each other out. Kim and Steiner refer to this technique as off-setting these paths, rather than blocking them (which would require conditioning on a variable along the path).
+
+While this illustrates the elegance of this approach very nicely, we have to realize that the assumptions (mentioned above) are quite strong. Using simulations like these, we could furhter investigate what happens when the effect of U is not stable over time, or when Y1 affects X and/or Y2, or Y1 is affected by X. Such an analysis could help to establish how robust a conclusion (about the strength and sign of the effect of X) is against violations of each of these assumptions.
