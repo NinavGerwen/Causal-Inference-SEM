@@ -234,7 +234,7 @@ where \pi = the propensity score.
 
 ```{r}
 Y <- df$DISTR.2
-X <- df$DIET
+X <- as.numeric(df$DIET)
 mu1hat <- sum( X*Y/ps ) / sum(X/ps)
 mu0hat <- sum( (1-X)*Y/(1-ps) ) / sum((1-X)/(1-ps))
 mu1hat - mu0hat

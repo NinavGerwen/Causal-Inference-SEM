@@ -47,9 +47,9 @@ qgraph(Fork_Adj,
                       c(0,1)))
 
 ## Mediator-structure with qgraph
-Mediator_Adj <- matrix(c(0,1,0,
-                         0,0,1,
-                         0,0,0), 3,3, byrow = TRUE,
+Mediator_Adj <- matrix(c(0,0,1,
+                         0,0,0,
+                         0,1,0), 3,3, byrow = TRUE,
                        dimnames = list(varnames, varnames))
 
 qgraph(Mediator_Adj,
@@ -145,7 +145,7 @@ summary(lm(mal ~ Income + health + net, data = mdata))
 maldag <- dagify(
   mal ~ Income + net,
   net ~ Income,
-  health ~ Income + mal,
+  health ~ Income + mal + net,
   exposure = "net",
   outcome = "mal"
 )
@@ -161,7 +161,8 @@ adjustmentSets(maldag)
 summary(lm(mal ~ net + Income, data = mdata))
 
 ## Comparison to the previous model: the effect of income has become smaller
-## and more variance is explained in mal.
+## and more variance is explained in mal. Furthermore, effect of net has
+## become twice as large.
 
 ## Part 5: Valid Adjustment Sets
 
@@ -260,7 +261,7 @@ adjustmentSets(datadag, type = "all") ## Mine were correct!
 scmdag <- dagify(
   X ~ Z,
   Y ~ X + Z,
-  exposure = "Z",
+  exposure = "X",
   outcome = "Y",
   coords = list(x = c(X = 0, Y = .5, Z = 1),
                 y = c(X = 0, Z = 0, Y = .5))
@@ -271,6 +272,8 @@ ggdag_status(scmdag) + theme_dag()
 ## Generating data
 
 n <- 1000
+
+set.seed(3)
 
 Z <- rnorm(n = n, mean = 0, sd = 1)
 X <- 2*Z + rnorm(n = n, mean = 0, sd = 1)
@@ -327,8 +330,120 @@ pcor(data)
 ## If X1 has fork structure, gives different results than a mediator structure
 ## hence it makes sense that it implies the causal effects.
 
+## Skeleton of the DAG:
+
+adj_full <- matrix(1,4,4)
+diag(adj_full) <- 0
+
+# make the layout custom (optional)
+layout = matrix(c(0,1,-1,0,1,0,0,-1),4,2,byrow = T)
+
+# Make the ``full'' graph
+qgraph(adj_full, labels = names, layout = layout, directed = FALSE, title = "Full Undirected Graph", title.cex = 1.25, vsize = 15)
+
+# Remove the edges between X2 - X3 and X1- x4
+adj_full <- matrix(1,4,4)
+diag(adj_full) <- 0
+adj <- adj_full
+adj[2,3] <- adj[3,2] <- 0
+adj[1,4] <- adj[4,1] <- 0
+
+# make the layout custom (optional)
+layout = matrix(c(0,1,-1,0,1,0,0,-1),4,2,byrow = T)
+
+par(mfrow=c(1,2))
+qgraph(adj_full, labels = names, layout = layout, directed = FALSE, title = "Full Undirected Graph", title.cex = 1.25, vsize = 15)
+qgraph(adj, labels = names, layout = layout, directed = FALSE, title = "Estimated Skeleton", title.cex = 1.25, vsize = 15)
+
+## CP-DAG
+
+## There are four triplets you must consider:  
+##  A) X2 - X1 - X3  
+##  B) X1 - X3 - X4  
+##  C) X1 - X2 - X4  
+##  D) X2 - X4 - X3
+
+## We rule out A) because we found above that  
+##  X2 and X3 are independent given X1
+
+## We rule out C) and B) because we found that   
+##  X1 is independent of X4 given {X2 , X3}
+
+## But X2 and X3 are always dependent (given either X4 or {X1, X4})  
+##  That means X2 -> X4 <- X3
+
+cpdag <- adj
+cpdag[4,2] <- 0 # we know that this arrow goes X2 -> X4
+cpdag[4,3] <- 0 # we know the direction is X3 -> X4
+
+# extra touch - making a matrix that indicates we have a mix of directed (true) and undirected (false) edges
+cptf <- matrix(FALSE, 4,4)
+cptf[2,4] <- cptf[3,4] <- TRUE
+
+par(mfrow = c(1,1))
+qgraph(cpdag, labels = names, layout = layout, directed = cptf, title = "Estimated CPDAG", title.cex = 1.25, asize = 8, vsize = 15)
+
+## Markov Equivalenc Class
+
+dag1 <- matrix(c(
+  0  ,  0  ,  1  ,  0,
+  1  ,  0  ,  0  ,  1,
+  0  ,  0  ,  0  ,  1,
+  0  ,  0  ,  0  ,  0), 4, 4, byrow = T)
+
+dag2 <- matrix(c(
+  0  ,  1  ,  0  ,  0,
+  0  ,  0  ,  0  ,  1,
+  1  ,  0  ,  0  ,  1,
+  0  ,  0  ,  0  ,  0), 4, 4, byrow = T)
+
+dag3 <- matrix(c(
+  0  ,  1  ,  1  ,  0,
+  0  ,  0  ,  0  ,  1,
+  0  ,  0  ,  0  ,  1,
+  0  ,  0  ,  0  ,  0), 4, 4, byrow = T)
+
+par(mfrow = c(1,3))
+qgraph(dag1, labels = names, layout = layout, directed = TRUE, asize = 8, vsize = 15)
+qgraph(dag2, labels = names, layout = layout, directed = TRUE, title = "Estimated Markov Equiv. Class", title.cex = 1.25, asize = 8, vsize = 15)
+qgraph(dag3, labels = names, layout = layout, directed = TRUE, asize = 8, vsize = 15)
+
+## These DAGS in the markov equivalence class also imply different causal effects.
 
 
+## 7.2: PC-Algorithm
 
+library(pcalg)
 
+suffStat <- list(C = cor(data), n = nrow(data))
 
+pc_fit1 <- pc(suffStat = suffStat, indepTest = gaussCItest,
+              p = ncol(data), alpha = 0.01)
+# This is the default plotting method for pcalg - uses Rgraphviz
+plot(pc_fit1, main = "Inferred CPDAG using pcalg")
+
+## Now we have the CPDAG
+## To get the Markov Equivalence Class:
+
+# Extract the adjacency matrix of the cpdag from pc_fit1
+cpdag_mat <- as(pc_fit1,"matrix")
+
+# Each row is a DAG adjacency matrix in vector form (by rows)
+res1 <- pdag2allDags(cpdag_mat)
+
+# We can get the adjacency matrix of an individual DAG using
+res1_dags <- list()
+for(i in 1:nrow(res1$dags)){
+  res1_dags[[i]] <- t(matrix(res1$dags[i,],4,4,byrow = TRUE))
+}
+# Notice we have to transpose the adjacency matrix here for qgraph!
+
+# We can plot each of these just as we did above
+par(mfrow = c(1,3))
+for(i in 1:3){
+  qgraph(res1_dags[[i]], labels = names, layout = layout, directed = TRUE, asize = 8, vsize = 15)
+}
+
+## ida() function to estimate causal effect according to each DAG in Markov Equivalence set
+
+ida(1,4,cov(data), pc_fit1@graph, verbose = TRUE)
