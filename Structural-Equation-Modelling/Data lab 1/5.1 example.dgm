@@ -1,0 +1,52 @@
+VERSION 1.1.0
+INPUT
+TITLE:
+ this is an example of a CFA with
+   continuous factor indicators
+DATA:
+ FILE IS ex5.1.dat;
+VARIABLE:
+ NAMES ARE y1-y6;
+ANALYSIS:
+    MODEL = NOCOVARIANCES;
+    MODEL = NOMEANSTRUCTURE;
+    INFORMATION = EXPECTED;
+MODEL:
+    f1 BY y1*y2-y3;
+   f2 BY y4*y5-y6;
+    f1@1 f2@1;
+INPUT_END
+2
+0
+0
+0
+ML
+1
+GENERAL
+0
+6
+2
+0
+y1 y2 y3 y4 y5 y6 f1 f2
+1
+-1 -1 -1 -1 -1 -1 0 0
+0
+2
+f1
+y1 y2 y3
+f2
+y4 y5 y6
+1 1 f1 y1 0.953 0.066
+1 1 f1 y2 1.072 0.066
+1 1 f1 y3 0.972 0.065
+1 1 f2 y4 0.873 0.076
+1 1 f2 y5 0.921 0.073
+1 1 f2 y6 0.784 0.069
+4 1 y1 1.063 0.096
+4 1 y2 0.800 0.100
+4 1 y3 1.009 0.095
+4 1 y4 1.289 0.119
+4 1 y5 0.858 0.110
+4 1 y6 1.064 0.097
+5 1 f1 1.000 0.000
+5 1 f2 1.000 0.000

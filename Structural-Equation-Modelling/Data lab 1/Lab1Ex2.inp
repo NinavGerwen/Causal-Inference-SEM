@@ -1,0 +1,7 @@
+  TITLE:	Exercise 2C - Lab 1
+  DATA:	FILE IS Grnt_mal.dat;
+  VARIABLE:	NAMES ARE y1-y6;
+  MODEL:	
+    f1 BY y1-y3;
+  	f2 BY y4-y6;
+  OUTPUT: TECH1 STDYX TECH4;
