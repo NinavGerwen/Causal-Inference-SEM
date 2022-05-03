@@ -1,0 +1,14 @@
+TITLE:  Model 1
+DATA:   FILE IS multigroup.dat;
+        
+VARIABLE: NAMES = y1-y4 group;
+          GROUPING IS group (1=male 2=female);             
+
+MODEL:
+eta BY y1 y2 y3 y4;
+
+MODEL female: 
+[y1-y4];
+[eta@0];
+
+OUTPUT: SAMPSTAT TECH1 MOD(0);

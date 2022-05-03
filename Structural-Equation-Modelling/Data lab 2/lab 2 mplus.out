@@ -1,0 +1,535 @@
+Mplus VERSION 8.7 DEMO
+MUTHEN & MUTHEN
+05/03/2022   2:13 PM
+
+INPUT INSTRUCTIONS
+
+  TITLE:  Model 1
+  DATA:   FILE IS multigroup.dat;
+
+  VARIABLE: NAMES = y1-y4 group;
+            GROUPING IS group (1=male 2=female);
+
+  MODEL:
+  eta BY y1 y2 y3 y4;
+
+  MODEL female:
+  [y1-y4];
+  [eta@0];
+
+  OUTPUT: SAMPSTAT TECH1 MOD(0);
+
+
+
+INPUT READING TERMINATED NORMALLY
+
+
+
+Model 1
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 2
+Number of observations
+   Group MALE                                                  200
+   Group FEMALE                                                200
+   Total sample size                                           400
+
+Number of dependent variables                                    4
+Number of independent variables                                  0
+Number of continuous latent variables                            1
+
+Observed dependent variables
+
+  Continuous
+   Y1          Y2          Y3          Y4
+
+Continuous latent variables
+   ETA
+
+Variables with special functions
+
+  Grouping variable     GROUP
+
+Estimator                                                       ML
+Information matrix                                        OBSERVED
+Maximum number of iterations                                  1000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+
+Input data file(s)
+  multigroup.dat
+
+Input data format  FREE
+
+
+SAMPLE STATISTICS
+
+
+     SAMPLE STATISTICS FOR MALE
+
+
+           Means
+              Y1            Y2            Y3            Y4
+              ________      ________      ________      ________
+                0.107         0.046        -0.003         0.068
+
+
+           Covariances
+              Y1            Y2            Y3            Y4
+              ________      ________      ________      ________
+ Y1             2.137
+ Y2             0.529         0.475
+ Y3             0.462         0.214         0.457
+ Y4             0.548         0.217         0.255         0.471
+
+
+           Correlations
+              Y1            Y2            Y3            Y4
+              ________      ________      ________      ________
+ Y1             1.000
+ Y2             0.525         1.000
+ Y3             0.467         0.460         1.000
+ Y4             0.547         0.459         0.549         1.000
+
+
+     SAMPLE STATISTICS FOR FEMALE
+
+
+           Means
+              Y1            Y2            Y3            Y4
+              ________      ________      ________      ________
+                0.008         0.064        -0.020         0.042
+
+
+           Covariances
+              Y1            Y2            Y3            Y4
+              ________      ________      ________      ________
+ Y1             0.535
+ Y2             0.316         0.592
+ Y3             0.260         0.301         0.563
+ Y4             0.286         0.312         0.277         0.550
+
+
+           Correlations
+              Y1            Y2            Y3            Y4
+              ________      ________      ________      ________
+ Y1             1.000
+ Y2             0.562         1.000
+ Y3             0.474         0.521         1.000
+ Y4             0.527         0.547         0.497         1.000
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS FOR MALE
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     Y1                    0.107       0.249      -3.332    0.50%      -1.089     -0.333      0.005
+             200.000       2.137      -0.170       4.289    0.50%       0.376      1.433
+     Y2                    0.046      -0.037      -1.575    0.50%      -0.554     -0.117      0.003
+             200.000       0.475      -0.393       1.695    0.50%       0.161      0.713
+     Y3                   -0.003       0.064      -2.122    0.50%      -0.591     -0.204      0.008
+             200.000       0.457       0.160       1.975    0.50%       0.137      0.527
+     Y4                    0.068      -0.135      -2.271    0.50%      -0.507     -0.053      0.089
+             200.000       0.471       0.427       2.239    0.50%       0.298      0.605
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS FOR FEMALE
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     Y1                    0.008      -0.246      -2.077    0.50%      -0.599     -0.139      0.021
+             200.000       0.535      -0.023       1.923    0.50%       0.185      0.622
+     Y2                    0.064      -0.389      -2.155    0.50%      -0.662     -0.081      0.126
+             200.000       0.592      -0.300       1.881    0.50%       0.338      0.748
+     Y3                   -0.020      -0.099      -2.043    0.50%      -0.715     -0.189      0.004
+             200.000       0.563       0.071       2.049    0.50%       0.168      0.603
+     Y4                    0.042      -0.029      -2.282    0.50%      -0.618     -0.136      0.072
+             200.000       0.550       0.324       2.173    0.50%       0.211      0.620
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       21
+
+Loglikelihood
+
+          H0 Value                       -1656.393
+          H1 Value                       -1637.575
+
+Information Criteria
+
+          Akaike (AIC)                    3354.787
+          Bayesian (BIC)                  3438.607
+          Sample-Size Adjusted BIC        3371.973
+            (n* = (n + 2) / 24)
+
+Chi-Square Test of Model Fit
+
+          Value                             37.637
+          Degrees of Freedom                     7
+          P-Value                           0.0000
+
+Chi-Square Contribution From Each Group
+
+          MALE                              29.690
+          FEMALE                             7.947
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+          Estimate                           0.148
+          90 Percent C.I.                    0.104  0.196
+          Probability RMSEA <= .05           0.000
+
+CFI/TLI
+
+          CFI                                0.937
+          TLI                                0.892
+
+Chi-Square Test of Model Fit for the Baseline Model
+
+          Value                            497.018
+          Degrees of Freedom                    12
+          P-Value                           0.0000
+
+SRMR (Standardized Root Mean Square Residual)
+
+          Value                              0.080
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+Group MALE
+
+ ETA      BY
+    Y1                 1.000      0.000    999.000    999.000
+    Y2                 0.831      0.084      9.910      0.000
+    Y3                 0.793      0.081      9.787      0.000
+    Y4                 0.847      0.082     10.375      0.000
+
+ Means
+    ETA                0.000      0.000    999.000    999.000
+
+ Intercepts
+    Y1                 0.107      0.093      1.142      0.254
+    Y2                 0.046      0.051      0.889      0.374
+    Y3                -0.003      0.048     -0.055      0.957
+    Y4                 0.068      0.049      1.379      0.168
+
+ Variances
+    ETA                0.387      0.083      4.670      0.000
+
+ Residual Variances
+    Y1                 1.357      0.154      8.820      0.000
+    Y2                 0.260      0.035      7.423      0.000
+    Y3                 0.223      0.031      7.276      0.000
+    Y4                 0.204      0.031      6.469      0.000
+
+Group FEMALE
+
+ ETA      BY
+    Y1                 1.000      0.000    999.000    999.000
+    Y2                 0.831      0.084      9.910      0.000
+    Y3                 0.793      0.081      9.787      0.000
+    Y4                 0.847      0.082     10.375      0.000
+
+ Means
+    ETA                0.000      0.000    999.000    999.000
+
+ Intercepts
+    Y1                 0.008      0.055      0.139      0.890
+    Y2                 0.064      0.052      1.245      0.213
+    Y3                -0.020      0.052     -0.372      0.710
+    Y4                 0.042      0.052      0.820      0.412
+
+ Variances
+    ETA                0.375      0.058      6.451      0.000
+
+ Residual Variances
+    Y1                 0.226      0.036      6.342      0.000
+    Y2                 0.277      0.037      7.497      0.000
+    Y3                 0.316      0.038      8.218      0.000
+    Y4                 0.268      0.035      7.598      0.000
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.222E-01
+       (ratio of smallest to largest eigenvalue)
+
+
+MODEL MODIFICATION INDICES
+
+NOTE:  Modification indices for direct effects of observed dependent variables
+regressed on covariates may not be included.  To include these, request
+MODINDICES (ALL).
+
+Minimum M.I. value for printing the modification index     0.000
+
+                                   M.I.     E.P.C.  Std E.P.C.  StdYX E.P.C.
+Group MALE
+
+
+BY Statements
+
+ETA      BY Y1                    28.017     0.967      0.602        0.455
+ETA      BY Y2                     8.570    -0.210     -0.130       -0.180
+ETA      BY Y3                     0.337    -0.038     -0.023       -0.034
+ETA      BY Y4                     0.507    -0.050     -0.031       -0.045
+
+WITH Statements
+
+Y2       WITH Y1                   5.021     0.117      0.117        0.197
+Y3       WITH Y1                   0.020     0.007      0.007        0.013
+Y3       WITH Y2                   1.428    -0.038     -0.038       -0.156
+Y4       WITH Y1                   4.708     0.108      0.108        0.205
+Y4       WITH Y2                   8.854    -0.100     -0.100       -0.433
+Y4       WITH Y3                   0.358     0.019      0.019        0.089
+
+Group FEMALE
+
+
+BY Statements
+
+ETA      BY Y1                    27.985    -0.967     -0.592       -0.763
+ETA      BY Y2                     8.566     0.145      0.089        0.121
+ETA      BY Y3                     0.336     0.031      0.019        0.026
+ETA      BY Y4                     0.506     0.035      0.022        0.030
+
+WITH Statements
+
+Y2       WITH Y1                   0.026    -0.005     -0.005       -0.021
+Y3       WITH Y1                   2.718    -0.052     -0.052       -0.196
+Y3       WITH Y2                   1.939     0.040      0.040        0.135
+Y4       WITH Y1                   1.576    -0.042     -0.042       -0.169
+Y4       WITH Y2                   1.151     0.032      0.032        0.116
+Y4       WITH Y3                   0.714     0.024      0.024        0.084
+
+
+
+TECHNICAL 1 OUTPUT
+
+
+     PARAMETER SPECIFICATION FOR MALE
+
+
+           NU
+              Y1            Y2            Y3            Y4
+              ________      ________      ________      ________
+                  1             2             3             4
+
+
+           LAMBDA
+              ETA
+              ________
+ Y1                 0
+ Y2                 5
+ Y3                 6
+ Y4                 7
+
+
+           THETA
+              Y1            Y2            Y3            Y4
+              ________      ________      ________      ________
+ Y1                 8
+ Y2                 0             9
+ Y3                 0             0            10
+ Y4                 0             0             0            11
+
+
+           ALPHA
+              ETA
+              ________
+                  0
+
+
+           BETA
+              ETA
+              ________
+ ETA                0
+
+
+           PSI
+              ETA
+              ________
+ ETA               12
+
+
+     PARAMETER SPECIFICATION FOR FEMALE
+
+
+           NU
+              Y1            Y2            Y3            Y4
+              ________      ________      ________      ________
+                 13            14            15            16
+
+
+           LAMBDA
+              ETA
+              ________
+ Y1                 0
+ Y2                 5
+ Y3                 6
+ Y4                 7
+
+
+           THETA
+              Y1            Y2            Y3            Y4
+              ________      ________      ________      ________
+ Y1                17
+ Y2                 0            18
+ Y3                 0             0            19
+ Y4                 0             0             0            20
+
+
+           ALPHA
+              ETA
+              ________
+                  0
+
+
+           BETA
+              ETA
+              ________
+ ETA                0
+
+
+           PSI
+              ETA
+              ________
+ ETA               21
+
+
+     STARTING VALUES FOR MALE
+
+
+           NU
+              Y1            Y2            Y3            Y4
+              ________      ________      ________      ________
+                0.107         0.046        -0.003         0.068
+
+
+           LAMBDA
+              ETA
+              ________
+ Y1             1.000
+ Y2             0.419
+ Y3             0.437
+ Y4             0.466
+
+
+           THETA
+              Y1            Y2            Y3            Y4
+              ________      ________      ________      ________
+ Y1             1.069
+ Y2             0.000         0.237
+ Y3             0.000         0.000         0.229
+ Y4             0.000         0.000         0.000         0.236
+
+
+           ALPHA
+              ETA
+              ________
+                0.000
+
+
+           BETA
+              ETA
+              ________
+ ETA            0.000
+
+
+           PSI
+              ETA
+              ________
+ ETA            0.050
+
+
+     STARTING VALUES FOR FEMALE
+
+
+           NU
+              Y1            Y2            Y3            Y4
+              ________      ________      ________      ________
+                0.107         0.046        -0.003         0.068
+
+
+           LAMBDA
+              ETA
+              ________
+ Y1             1.000
+ Y2             1.117
+ Y3             0.959
+ Y4             1.013
+
+
+           THETA
+              Y1            Y2            Y3            Y4
+              ________      ________      ________      ________
+ Y1             1.069
+ Y2             0.000         0.237
+ Y3             0.000         0.000         0.229
+ Y4             0.000         0.000         0.000         0.236
+
+
+           ALPHA
+              ETA
+              ________
+                0.000
+
+
+           BETA
+              ETA
+              ________
+ ETA            0.000
+
+
+           PSI
+              ETA
+              ________
+ ETA            0.050
+
+
+DIAGRAM INFORMATION
+
+  Use View Diagram under the Diagram menu in the Mplus Editor to view the diagram.
+  If running Mplus from the Mplus Diagrammer, the diagram opens automatically.
+
+  Diagram output
+    c:\users\nina-\documents\github\causal-inference-sem\structural-equation-modelling\data lab 2\lab 2 mplus.dgm
+
+     Beginning Time:  14:13:31
+        Ending Time:  14:13:31
+       Elapsed Time:  00:00:00
+
+
+Mplus VERSION 8.7 DEMO has the following limitations:
+  Maximum number of dependent variables: 6
+  Maximum number of independent variables: 2
+  Maximum number of between variables: 2
+  Maximum number of continuous latent variables in time series analysis: 2
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2021 Muthen & Muthen

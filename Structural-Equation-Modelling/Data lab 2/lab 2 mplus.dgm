@@ -1,0 +1,55 @@
+VERSION 1.1.0
+INPUT
+TITLE:
+  Model 1
+DATA:
+   FILE IS multigroup.dat;
+VARIABLE:
+ NAMES = y1-y4 group;
+          GROUPING IS group (1=male 2=female);
+OUTPUT:
+ SAMPSTAT TECH1 MOD(0);
+MODEL:
+eta BY y1 y2 y3 y4;
+MODEL FEMALE:
+[y1-y4];
+[eta@0];
+INPUT_END
+2
+0
+0
+0
+ML
+1
+GENERAL
+2
+MALE
+FEMALE
+4
+1
+0
+y1 y2 y3 y4 eta
+1
+-1 -1 -1 -1 0
+0
+1
+eta
+y1 y2 y3 y4
+1 1 eta y1 1.000 0.000
+1 1 eta y2 0.831 0.084
+1 1 eta y3 0.793 0.081
+1 1 eta y4 0.847 0.082
+4 1 y1 1.357 0.154
+4 1 y2 0.260 0.035
+4 1 y3 0.223 0.031
+4 1 y4 0.204 0.031
+5 1 eta 0.387 0.083
+1 2 eta y1 1.000 0.000
+1 2 eta y2 0.831 0.084
+1 2 eta y3 0.793 0.081
+1 2 eta y4 0.847 0.082
+4 2 y1 0.226 0.036
+4 2 y2 0.277 0.037
+4 2 y3 0.316 0.038
+4 2 y4 0.268 0.035
+5 2 eta 0.375 0.058
