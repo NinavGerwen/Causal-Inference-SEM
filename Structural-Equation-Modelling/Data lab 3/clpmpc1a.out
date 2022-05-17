@@ -1,0 +1,364 @@
+Mplus VERSION 7.11 DEMO
+MUTHEN & MUTHEN
+05/11/2016   3:13 PM
+
+INPUT INSTRUCTIONS
+
+  TITLE:      Parenting style and depression in adolescents (Soenens et al., 2008)
+
+  DATA:       TYPE IS MEANS STDEVIATIONS CORRELATION;
+              FILE = Soenens.dat;
+              NOBSERVATIONS = 396;
+
+  VARIABLE:   NAMES ARE PsCon1 PsCon2 PsCon3 Resp1 Resp2 Resp3 BeCon1
+              BeCon2 BeCon3 Dep1 Dep2 Dep3;
+              USEVARIABLES = PsCon1 Dep1 PsCon2 Dep2 PsCon3 Dep3;
+
+
+  MODEL:     [PsCon1 PsCon2 PsCon3](MP);
+             [Dep2 Dep3] (MD);
+             PsCon1 WITH Dep1 PsCon2 Dep2 PsCon3 Dep3;
+             Dep1 WITH PsCon2 Dep2 PsCon3 Dep3;
+             PsCon2 WITH Dep2 PsCon3 Dep3;
+             Dep2 WITH PsCon3 Dep3;
+             PsCon3 WITH Dep3;
+
+  OUTPUT:     TECH1 SAMPSTAT STANDARDIZED (STDYX) mod(4);
+
+
+
+
+
+INPUT READING TERMINATED NORMALLY
+
+
+
+Parenting style and depression in adolescents (Soenens et al., 2008)
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                         396
+
+Number of dependent variables                                    6
+Number of independent variables                                  0
+Number of continuous latent variables                            0
+
+Observed dependent variables
+
+  Continuous
+   PSCON1      DEP1        PSCON2      DEP2        PSCON3      DEP3
+
+
+Estimator                                                       ML
+Information matrix                                        EXPECTED
+Maximum number of iterations                                  1000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+
+Input data file(s)
+  Soenens.dat
+
+Input data format  FREE
+
+
+SAMPLE STATISTICS
+
+
+     SAMPLE STATISTICS
+
+
+           Means/Intercepts/Thresholds
+              PSCON1        DEP1          PSCON2        DEP2          PSCON3
+              ________      ________      ________      ________      ________
+      1         1.940         9.450         1.940         8.510         1.980
+
+
+           Means/Intercepts/Thresholds
+              DEP3
+              ________
+      1         8.700
+
+
+           Covariances/Correlations/Residual Correlations
+              PSCON1        DEP1          PSCON2        DEP2          PSCON3
+              ________      ________      ________      ________      ________
+ PSCON1         0.397
+ DEP1           1.436        37.946
+ PSCON2         0.287         1.441         0.423
+ DEP2           1.474        15.893         1.521        36.000
+ PSCON3         0.287         1.340         0.323         1.714         0.462
+ DEP3           1.048        14.419         1.481        17.741         1.885
+
+
+           Covariances/Correlations/Residual Correlations
+              DEP3
+              ________
+ DEP3          37.946
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       24
+
+Loglikelihood
+
+          H0 Value                       -4523.932
+          H1 Value                       -4522.269
+
+Information Criteria
+
+          Akaike (AIC)                    9095.864
+          Bayesian (BIC)                  9191.418
+          Sample-Size Adjusted BIC        9115.265
+            (n* = (n + 2) / 24)
+
+Chi-Square Test of Model Fit
+
+          Value                              3.325
+          Degrees of Freedom                     3
+          P-Value                           0.3442
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+          Estimate                           0.017
+          90 Percent C.I.                    0.000  0.088
+          Probability RMSEA <= .05           0.690
+
+CFI/TLI
+
+          CFI                                1.000
+          TLI                                0.998
+
+Chi-Square Test of Model Fit for the Baseline Model
+
+          Value                            978.600
+          Degrees of Freedom                    15
+          P-Value                           0.0000
+
+SRMR (Standardized Root Mean Square Residual)
+
+          Value                              0.011
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ PSCON1   WITH
+    DEP1               1.432      0.207      6.906      0.000
+    PSCON2             0.286      0.025     11.412      0.000
+    DEP2               1.471      0.203      7.230      0.000
+    PSCON3             0.286      0.026     11.060      0.000
+    DEP3               1.044      0.202      5.177      0.000
+
+ DEP1     WITH
+    PSCON2             1.438      0.213      6.741      0.000
+    DEP2              15.853      2.017      7.861      0.000
+    PSCON3             1.336      0.221      6.056      0.000
+    DEP3              14.379      2.035      7.064      0.000
+
+ PSCON2   WITH
+    DEP2               1.517      0.210      7.230      0.000
+    PSCON3             0.322      0.027     11.718      0.000
+    DEP3               1.476      0.214      6.895      0.000
+
+ DEP2     WITH
+    PSCON3             1.709      0.222      7.697      0.000
+    DEP3              17.693      2.056      8.607      0.000
+
+ PSCON3   WITH
+    DEP3               1.886      0.231      8.176      0.000
+
+ Means
+    PSCON1             1.949      0.029     66.936      0.000
+    DEP1               9.474      0.309     30.682      0.000
+    PSCON2             1.949      0.029     66.936      0.000
+    DEP2               8.526      0.258     33.104      0.000
+    PSCON3             1.949      0.029     66.936      0.000
+    DEP3               8.526      0.258     33.104      0.000
+
+ Variances
+    PSCON1             0.396      0.028     14.071      0.000
+    DEP1              37.850      2.690     14.071      0.000
+    PSCON2             0.422      0.030     14.071      0.000
+    DEP2              35.909      2.552     14.071      0.000
+    PSCON3             0.462      0.033     14.071      0.000
+    DEP3              37.880      2.692     14.071      0.000
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ PSCON1   WITH
+    DEP1               0.370      0.043      8.531      0.000
+    PSCON2             0.700      0.026     27.321      0.000
+    DEP2               0.390      0.043      9.153      0.000
+    PSCON3             0.669      0.028     24.058      0.000
+    DEP3               0.269      0.047      5.781      0.000
+
+ DEP1     WITH
+    PSCON2             0.360      0.044      8.231      0.000
+    DEP2               0.430      0.041     10.498      0.000
+    PSCON3             0.320      0.045      7.081      0.000
+    DEP3               0.380      0.043      8.830      0.000
+
+ PSCON2   WITH
+    DEP2               0.390      0.043      9.153      0.000
+    PSCON3             0.729      0.024     30.896      0.000
+    DEP3               0.369      0.043      8.512      0.000
+
+ DEP2     WITH
+    PSCON3             0.419      0.041     10.129      0.000
+    DEP3               0.480      0.039     12.400      0.000
+
+ PSCON3   WITH
+    DEP3               0.451      0.040     11.253      0.000
+
+ Means
+    PSCON1             3.098      0.119     25.943      0.000
+    DEP1               1.540      0.074     20.740      0.000
+    PSCON2             3.003      0.116     25.943      0.000
+    DEP2               1.423      0.066     21.442      0.000
+    PSCON3             2.868      0.111     25.943      0.000
+    DEP3               1.385      0.065     21.442      0.000
+
+ Variances
+    PSCON1             1.000      0.000    999.000    999.000
+    DEP1               1.000      0.000    999.000    999.000
+    PSCON2             1.000      0.000    999.000    999.000
+    DEP2               1.000      0.000    999.000    999.000
+    PSCON3             1.000      0.000    999.000    999.000
+    DEP3               1.000      0.000    999.000    999.000
+
+
+R-SQUARE
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.129E-03
+       (ratio of smallest to largest eigenvalue)
+
+
+MODEL MODIFICATION INDICES
+
+NOTE:  Modification indices for direct effects of observed dependent variables
+regressed on covariates may not be included.  To include these, request
+MODINDICES (ALL).
+
+Minimum M.I. value for printing the modification index     4.000
+
+                                   M.I.     E.P.C.  Std E.P.C.  StdYX E.P.C.
+
+No modification indices above the minimum value.
+
+
+
+TECHNICAL 1 OUTPUT
+
+
+     PARAMETER SPECIFICATION
+
+
+           NU
+              PSCON1        DEP1          PSCON2        DEP2          PSCON3
+              ________      ________      ________      ________      ________
+      1           1             2             1             3             1
+
+
+           NU
+              DEP3
+              ________
+      1           3
+
+
+           THETA
+              PSCON1        DEP1          PSCON2        DEP2          PSCON3
+              ________      ________      ________      ________      ________
+ PSCON1             4
+ DEP1               5             6
+ PSCON2             7             8             9
+ DEP2              10            11            12            13
+ PSCON3            14            15            16            17            18
+ DEP3              19            20            21            22            23
+
+
+           THETA
+              DEP3
+              ________
+ DEP3              24
+
+
+     STARTING VALUES
+
+
+           NU
+              PSCON1        DEP1          PSCON2        DEP2          PSCON3
+              ________      ________      ________      ________      ________
+      1         0.000         0.000         0.000         0.000         0.000
+
+
+           NU
+              DEP3
+              ________
+      1         0.000
+
+
+           THETA
+              PSCON1        DEP1          PSCON2        DEP2          PSCON3
+              ________      ________      ________      ________      ________
+ PSCON1         0.198
+ DEP1           0.000        18.973
+ PSCON2         0.000         0.000         0.211
+ DEP2           0.000         0.000         0.000        18.000
+ PSCON3         0.000         0.000         0.000         0.000         0.231
+ DEP3           0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              DEP3
+              ________
+ DEP3          18.973
+
+
+DIAGRAM INFORMATION
+
+  Use View Diagram under the Diagram menu in the Mplus Editor to view the diagram.
+  If running Mplus from the Mplus Diagrammer, the diagram opens automatically.
+
+  Diagram output
+    c:\users\hamak103\dropbox\onderwijs\rm\sem\2016\lab 3\exercise 3\clpmpc1a.dgm
+
+     Beginning Time:  15:13:22
+        Ending Time:  15:13:22
+       Elapsed Time:  00:00:00
+
+
+Mplus VERSION 7.11 DEMO has the following limitations:
+  Maximum number of dependent variables: 6
+  Maximum number of independent variables: 2
+  Maximum number of between variables: 2
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2013 Muthen & Muthen

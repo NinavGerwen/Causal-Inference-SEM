@@ -1,0 +1,63 @@
+VERSION 1.1.0
+INPUT
+TITLE:
+      Exercise 2
+
+DATA:
+       File is GPA.dat;
+VARIABLE:
+NAMES = ID sex hsGPA GPA1 GPA2 GPA3 GPA4 GPA5 GPA6 JOB1 JOB2 JOB3 JOB4 JOB5 JOB6 AU;
+            USEVARIABLES = GPA1-GPA6;
+OUTPUT:
+ SAMPSTAT TECH1 MOD(4) RES;
+MODEL:
+ i s q | GPA1@-5 GPA2@-3 GPA3@-1 GPA4@1 GPA5@3 GPA6@5;
+INPUT_END
+2
+0
+0
+0
+ML
+1
+GENERAL
+0
+6
+3
+0
+gpa1 gpa2 gpa3 gpa4 gpa5 gpa6 i s q
+1
+-1 -1 -1 -1 -1 -1 0 0 0
+1
+i s q
+gpa1 gpa2 gpa3 gpa4 gpa5 gpa6
+0
+1 1 i gpa1 1.000 0.000
+1 1 i gpa2 1.000 0.000
+1 1 i gpa3 1.000 0.000
+1 1 i gpa4 1.000 0.000
+1 1 i gpa5 1.000 0.000
+1 1 i gpa6 1.000 0.000
+1 1 s gpa1 -5.000 0.000
+1 1 s gpa2 -3.000 0.000
+1 1 s gpa3 -1.000 0.000
+1 1 s gpa4 1.000 0.000
+1 1 s gpa5 3.000 0.000
+1 1 s gpa6 5.000 0.000
+1 1 q gpa1 25.000 0.000
+1 1 q gpa2 9.000 0.000
+1 1 q gpa3 1.000 0.000
+1 1 q gpa4 1.000 0.000
+1 1 q gpa5 9.000 0.000
+1 1 q gpa6 25.000 0.000
+2 1 s i 0.007 0.001
+2 1 q i -.0009211769211 0.0002227146615
+2 1 q s -.0001315416303 0.0000346768720
+4 1 gpa1 0.053 0.012
+4 1 gpa2 0.069 0.008
+4 1 gpa3 0.053 0.006
+4 1 gpa4 0.025 0.004
+4 1 gpa5 0.013 0.003
+4 1 gpa6 0.017 0.006
+5 1 i 0.085 0.010
+5 1 s 0.001 0.0001851724955
+5 1 q 0.0000246404525 0.0000101147525

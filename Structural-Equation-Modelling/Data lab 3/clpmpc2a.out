@@ -1,0 +1,751 @@
+Mplus VERSION 7.11 DEMO
+MUTHEN & MUTHEN
+05/11/2016   2:09 PM
+
+INPUT INSTRUCTIONS
+
+  TITLE:      Parenting style and depression in adolescents (Soenens et al., 2008)
+
+  DATA:       TYPE IS MEANS STDEVIATIONS CORRELATION;
+              FILE = Soenens.dat;
+              NOBSERVATIONS = 396;
+
+  VARIABLE:   NAMES ARE PsCon1 PsCon2 PsCon3 Resp1 Resp2 Resp3 BeCon1
+              BeCon2 BeCon3 Dep1 Dep2 Dep3;
+              USEVARIABLES = PsCon1 Dep1 PsCon2 Dep2 PsCon3 Dep3;
+
+  MODEL:      cDep1 BY Dep1@1;
+              cDep2 BY Dep2@1;
+              cDep3 BY Dep3@1;
+              cPsCon1 BY PsCon1@1;
+              cPsCon2 BY PsCon2@1;
+              cPsCon3 BY PsCon3@1;
+              [Dep2 Dep3](MD);
+              [PsCon1 PsCon2 PsCon3](MPs);
+              PsCon1-Dep3@0;
+              cPsCon2 ON cPsCon1 (phi11);
+              cPsCon3 ON cPsCon2 (phi11);
+              cDep2 ON cDep1 (phi22);
+              cDep3 ON cDep2 (phi22);
+              cPsCon2 ON cDep1 (phi12);
+              cPsCon3 ON cDep2 (phi12);
+              cDep2 ON cPsCon1 (phi21);
+              cDep3 ON cPsCon2 (phi21);
+              cDep1 WITH cPsCon1;
+              cDep2 WITH cPsCon2;
+              cDep3 WITH cPsCon3;
+
+
+
+  OUTPUT:     TECH1 SAMPSTAT STANDARDIZED (STDYX) MOD (4) TECH3;
+
+
+
+
+
+INPUT READING TERMINATED NORMALLY
+
+
+
+Parenting style and depression in adolescents (Soenens et al., 2008)
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                         396
+
+Number of dependent variables                                    6
+Number of independent variables                                  0
+Number of continuous latent variables                            6
+
+Observed dependent variables
+
+  Continuous
+   PSCON1      DEP1        PSCON2      DEP2        PSCON3      DEP3
+
+Continuous latent variables
+   CDEP1       CDEP2       CDEP3       CPSCON1     CPSCON2     CPSCON3
+
+
+Estimator                                                       ML
+Information matrix                                        EXPECTED
+Maximum number of iterations                                  1000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+
+Input data file(s)
+  Soenens.dat
+
+Input data format  FREE
+
+
+SAMPLE STATISTICS
+
+
+     SAMPLE STATISTICS
+
+
+           Means/Intercepts/Thresholds
+              PSCON1        DEP1          PSCON2        DEP2          PSCON3
+              ________      ________      ________      ________      ________
+      1         1.940         9.450         1.940         8.510         1.980
+
+
+           Means/Intercepts/Thresholds
+              DEP3
+              ________
+      1         8.700
+
+
+           Covariances/Correlations/Residual Correlations
+              PSCON1        DEP1          PSCON2        DEP2          PSCON3
+              ________      ________      ________      ________      ________
+ PSCON1         0.397
+ DEP1           1.436        37.946
+ PSCON2         0.287         1.441         0.423
+ DEP2           1.474        15.893         1.521        36.000
+ PSCON3         0.287         1.340         0.323         1.714         0.462
+ DEP3           1.048        14.419         1.481        17.741         1.885
+
+
+           Covariances/Correlations/Residual Correlations
+              DEP3
+              ________
+ DEP3          37.946
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       16
+
+Loglikelihood
+
+          H0 Value                       -4555.359
+          H1 Value                       -4522.269
+
+Information Criteria
+
+          Akaike (AIC)                    9142.718
+          Bayesian (BIC)                  9206.421
+          Sample-Size Adjusted BIC        9155.653
+            (n* = (n + 2) / 24)
+
+Chi-Square Test of Model Fit
+
+          Value                             66.180
+          Degrees of Freedom                    11
+          P-Value                           0.0000
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+          Estimate                           0.113
+          90 Percent C.I.                    0.087  0.139
+          Probability RMSEA <= .05           0.000
+
+CFI/TLI
+
+          CFI                                0.943
+          TLI                                0.922
+
+Chi-Square Test of Model Fit for the Baseline Model
+
+          Value                            978.600
+          Degrees of Freedom                    15
+          P-Value                           0.0000
+
+SRMR (Standardized Root Mean Square Residual)
+
+          Value                              0.042
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ CDEP1    BY
+    DEP1               1.000      0.000    999.000    999.000
+
+ CDEP2    BY
+    DEP2               1.000      0.000    999.000    999.000
+
+ CDEP3    BY
+    DEP3               1.000      0.000    999.000    999.000
+
+ CPSCON1  BY
+    PSCON1             1.000      0.000    999.000    999.000
+
+ CPSCON2  BY
+    PSCON2             1.000      0.000    999.000    999.000
+
+ CPSCON3  BY
+    PSCON3             1.000      0.000    999.000    999.000
+
+ CPSCON2  ON
+    CPSCON1            0.690      0.027     25.377      0.000
+    CDEP1              0.015      0.003      5.208      0.000
+
+ CPSCON3  ON
+    CPSCON2            0.690      0.027     25.377      0.000
+    CDEP2              0.015      0.003      5.208      0.000
+
+ CDEP2    ON
+    CDEP1              0.361      0.033     10.962      0.000
+    CPSCON1            2.290      0.312      7.349      0.000
+
+ CDEP3    ON
+    CDEP2              0.361      0.033     10.962      0.000
+    CPSCON2            2.290      0.312      7.349      0.000
+
+ CDEP1    WITH
+    CPSCON1            1.433      0.207      6.907      0.000
+
+ CDEP2    WITH
+    CPSCON2            0.327      0.121      2.703      0.007
+
+ CDEP3    WITH
+    CPSCON3            0.538      0.123      4.358      0.000
+
+ Intercepts
+    PSCON1             1.955      0.028     68.632      0.000
+    DEP1               9.511      0.303     31.401      0.000
+    PSCON2             1.955      0.028     68.632      0.000
+    DEP2               8.567      0.258     33.200      0.000
+    PSCON3             1.955      0.028     68.632      0.000
+    DEP3               8.567      0.258     33.200      0.000
+
+ Variances
+    CDEP1             37.853      2.690     14.071      0.000
+    CPSCON1            0.396      0.028     14.071      0.000
+
+ Residual Variances
+    PSCON1             0.000      0.000    999.000    999.000
+    DEP1               0.000      0.000    999.000    999.000
+    PSCON2             0.000      0.000    999.000    999.000
+    DEP2               0.000      0.000    999.000    999.000
+    PSCON3             0.000      0.000    999.000    999.000
+    DEP3               0.000      0.000    999.000    999.000
+    CDEP2             27.106      1.926     14.071      0.000
+    CDEP3             27.738      1.971     14.071      0.000
+    CPSCON2            0.210      0.015     14.071      0.000
+    CPSCON3            0.207      0.015     14.071      0.000
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ CDEP1    BY
+    DEP1               1.000      0.000    999.000    999.000
+
+ CDEP2    BY
+    DEP2               1.000      0.000    999.000    999.000
+
+ CDEP3    BY
+    DEP3               1.000      0.000    999.000    999.000
+
+ CPSCON1  BY
+    PSCON1             1.000      0.000    999.000    999.000
+
+ CPSCON2  BY
+    PSCON2             1.000      0.000    999.000    999.000
+
+ CPSCON3  BY
+    PSCON3             1.000      0.000    999.000    999.000
+
+ CPSCON2  ON
+    CPSCON1            0.657      0.024     27.302      0.000
+    CDEP1              0.139      0.027      5.168      0.000
+
+ CPSCON3  ON
+    CPSCON2            0.675      0.025     26.655      0.000
+    CDEP2              0.134      0.026      5.170      0.000
+
+ CDEP2    ON
+    CDEP1              0.368      0.033     11.091      0.000
+    CPSCON1            0.239      0.033      7.309      0.000
+
+ CDEP3    ON
+    CDEP2              0.357      0.035     10.315      0.000
+    CPSCON2            0.248      0.033      7.418      0.000
+
+ CDEP1    WITH
+    CPSCON1            0.370      0.043      8.534      0.000
+
+ CDEP2    WITH
+    CPSCON2            0.137      0.049      2.781      0.005
+
+ CDEP3    WITH
+    CPSCON3            0.224      0.048      4.704      0.000
+
+ Intercepts
+    PSCON1             3.106      0.119     26.038      0.000
+    DEP1               1.546      0.074     20.957      0.000
+    PSCON2             2.958      0.100     29.587      0.000
+    DEP2               1.418      0.062     22.774      0.000
+    PSCON3             2.896      0.109     26.579      0.000
+    DEP3               1.401      0.063     22.178      0.000
+
+ Variances
+    CDEP1              1.000      0.000    999.000    999.000
+    CPSCON1            1.000      0.000    999.000    999.000
+
+ Residual Variances
+    PSCON1             0.000    999.000    999.000    999.000
+    DEP1               0.000    999.000    999.000    999.000
+    PSCON2             0.000    999.000    999.000    999.000
+    DEP2               0.000    999.000    999.000    999.000
+    PSCON3             0.000    999.000    999.000    999.000
+    DEP3               0.000    999.000    999.000    999.000
+    CDEP2              0.743      0.030     24.753      0.000
+    CDEP3              0.742      0.034     22.036      0.000
+    CPSCON2            0.482      0.030     15.999      0.000
+    CPSCON3            0.455      0.033     13.777      0.000
+
+
+R-SQUARE
+
+    Observed                                        Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    PSCON1             1.000    999.000    999.000    999.000
+    DEP1               1.000    999.000    999.000    999.000
+    PSCON2             1.000    999.000    999.000    999.000
+    DEP2               1.000    999.000    999.000    999.000
+    PSCON3             1.000    999.000    999.000    999.000
+    DEP3               1.000    999.000    999.000    999.000
+
+     Latent                                         Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    CDEP2              0.257      0.030      8.578      0.000
+    CDEP3              0.258      0.034      7.664      0.000
+    CPSCON2            0.518      0.030     17.228      0.000
+    CPSCON3            0.545      0.033     16.509      0.000
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.920E-04
+       (ratio of smallest to largest eigenvalue)
+
+
+MODEL MODIFICATION INDICES
+
+NOTE:  Modification indices for direct effects of observed dependent variables
+regressed on covariates may not be included.  To include these, request
+MODINDICES (ALL).
+
+Minimum M.I. value for printing the modification index     4.000
+
+                                   M.I.     E.P.C.  Std E.P.C.  StdYX E.P.C.
+
+BY Statements
+
+CDEP1    BY DEP2                   4.010    -0.097     -0.596       -0.099
+CDEP1    BY DEP3                  11.778     0.154      0.950        0.155
+CDEP3    BY DEP1                  10.586     0.159      0.972        0.158
+CPSCON1  BY PSCON2                10.240    -0.100     -0.063       -0.095
+CPSCON1  BY PSCON3                33.662     0.241      0.152        0.225
+CPSCON1  BY DEP3                   5.212    -1.095     -0.689       -0.113
+CPSCON3  BY PSCON1                37.175     0.286      0.193        0.307
+CPSCON3  BY PSCON2                23.052    -0.241     -0.163       -0.246
+
+ON/BY Statements
+
+CDEP1    ON CDEP3    /
+CDEP3    BY CDEP1                 13.096     0.207      0.206        0.206
+CDEP3    ON CDEP1    /
+CDEP1    BY CDEP3                 11.778     0.154      0.155        0.155
+CDEP3    ON CPSCON1  /
+CPSCON1  BY CDEP3                  5.212    -1.095     -0.113       -0.113
+CPSCON1  ON CDEP3    /
+CDEP3    BY CPSCON1                6.487    -0.017     -0.168       -0.168
+CPSCON1  ON CPSCON3  /
+CPSCON3  BY CPSCON1               31.151     0.441      0.473        0.473
+CPSCON2  ON CPSCON3  /
+CPSCON3  BY CPSCON2               31.969    -0.370     -0.378       -0.378
+CPSCON3  ON CPSCON1  /
+CPSCON1  BY CPSCON3               33.662     0.241      0.225        0.225
+
+WITH Statements
+
+PSCON2   WITH PSCON1              23.610    -0.055     -0.055      999.000
+DEP2     WITH DEP1                 6.654    -4.758     -4.758      999.000
+PSCON3   WITH PSCON1              42.048     0.063      0.063      999.000
+PSCON3   WITH PSCON2              20.489    -0.055     -0.055      999.000
+DEP3     WITH PSCON1               8.748    -0.333     -0.333      999.000
+DEP3     WITH DEP1                14.867     5.243      5.243      999.000
+CDEP3    WITH CDEP1               18.903     6.603      0.204        0.204
+CPSCON1  WITH CDEP3               14.169    -0.633     -0.191       -0.191
+CPSCON3  WITH CDEP1                4.056    -0.265     -0.094       -0.094
+CPSCON3  WITH CPSCON1             35.285     0.087      0.302        0.302
+CPSCON3  WITH CPSCON2             20.490    -0.055     -0.262       -0.262
+
+Variances/Residual Variances
+
+PSCON2                            18.982     0.078      0.078        0.178
+
+
+TECHNICAL 1 OUTPUT
+
+
+     PARAMETER SPECIFICATION
+
+
+           NU
+              PSCON1        DEP1          PSCON2        DEP2          PSCON3
+              ________      ________      ________      ________      ________
+      1           1             2             1             3             1
+
+
+           NU
+              DEP3
+              ________
+      1           3
+
+
+           LAMBDA
+              CDEP1         CDEP2         CDEP3         CPSCON1       CPSCON2
+              ________      ________      ________      ________      ________
+ PSCON1             0             0             0             0             0
+ DEP1               0             0             0             0             0
+ PSCON2             0             0             0             0             0
+ DEP2               0             0             0             0             0
+ PSCON3             0             0             0             0             0
+ DEP3               0             0             0             0             0
+
+
+           LAMBDA
+              CPSCON3
+              ________
+ PSCON1             0
+ DEP1               0
+ PSCON2             0
+ DEP2               0
+ PSCON3             0
+ DEP3               0
+
+
+           THETA
+              PSCON1        DEP1          PSCON2        DEP2          PSCON3
+              ________      ________      ________      ________      ________
+ PSCON1             0
+ DEP1               0             0
+ PSCON2             0             0             0
+ DEP2               0             0             0             0
+ PSCON3             0             0             0             0             0
+ DEP3               0             0             0             0             0
+
+
+           THETA
+              DEP3
+              ________
+ DEP3               0
+
+
+           ALPHA
+              CDEP1         CDEP2         CDEP3         CPSCON1       CPSCON2
+              ________      ________      ________      ________      ________
+      1           0             0             0             0             0
+
+
+           ALPHA
+              CPSCON3
+              ________
+      1           0
+
+
+           BETA
+              CDEP1         CDEP2         CDEP3         CPSCON1       CPSCON2
+              ________      ________      ________      ________      ________
+ CDEP1              0             0             0             0             0
+ CDEP2              4             0             0             5             0
+ CDEP3              0             4             0             0             5
+ CPSCON1            0             0             0             0             0
+ CPSCON2            6             0             0             7             0
+ CPSCON3            0             6             0             0             7
+
+
+           BETA
+              CPSCON3
+              ________
+ CDEP1              0
+ CDEP2              0
+ CDEP3              0
+ CPSCON1            0
+ CPSCON2            0
+ CPSCON3            0
+
+
+           PSI
+              CDEP1         CDEP2         CDEP3         CPSCON1       CPSCON2
+              ________      ________      ________      ________      ________
+ CDEP1              8
+ CDEP2              0             9
+ CDEP3              0             0            10
+ CPSCON1           11             0             0            12
+ CPSCON2            0            13             0             0            14
+ CPSCON3            0             0            15             0             0
+
+
+           PSI
+              CPSCON3
+              ________
+ CPSCON3           16
+
+
+     STARTING VALUES
+
+
+           NU
+              PSCON1        DEP1          PSCON2        DEP2          PSCON3
+              ________      ________      ________      ________      ________
+      1         1.940         9.450         1.940         8.510         1.980
+
+
+           NU
+              DEP3
+              ________
+      1         8.700
+
+
+           LAMBDA
+              CDEP1         CDEP2         CDEP3         CPSCON1       CPSCON2
+              ________      ________      ________      ________      ________
+ PSCON1         0.000         0.000         0.000         1.000         0.000
+ DEP1           1.000         0.000         0.000         0.000         0.000
+ PSCON2         0.000         0.000         0.000         0.000         1.000
+ DEP2           0.000         1.000         0.000         0.000         0.000
+ PSCON3         0.000         0.000         0.000         0.000         0.000
+ DEP3           0.000         0.000         1.000         0.000         0.000
+
+
+           LAMBDA
+              CPSCON3
+              ________
+ PSCON1         0.000
+ DEP1           0.000
+ PSCON2         0.000
+ DEP2           0.000
+ PSCON3         1.000
+ DEP3           0.000
+
+
+           THETA
+              PSCON1        DEP1          PSCON2        DEP2          PSCON3
+              ________      ________      ________      ________      ________
+ PSCON1         0.000
+ DEP1           0.000         0.000
+ PSCON2         0.000         0.000         0.000
+ DEP2           0.000         0.000         0.000         0.000
+ PSCON3         0.000         0.000         0.000         0.000         0.000
+ DEP3           0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              DEP3
+              ________
+ DEP3           0.000
+
+
+           ALPHA
+              CDEP1         CDEP2         CDEP3         CPSCON1       CPSCON2
+              ________      ________      ________      ________      ________
+      1         0.000         0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              CPSCON3
+              ________
+      1         0.000
+
+
+           BETA
+              CDEP1         CDEP2         CDEP3         CPSCON1       CPSCON2
+              ________      ________      ________      ________      ________
+ CDEP1          0.000         0.000         0.000         0.000         0.000
+ CDEP2          0.000         0.000         0.000         0.000         0.000
+ CDEP3          0.000         0.000         0.000         0.000         0.000
+ CPSCON1        0.000         0.000         0.000         0.000         0.000
+ CPSCON2        0.000         0.000         0.000         0.000         0.000
+ CPSCON3        0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              CPSCON3
+              ________
+ CDEP1          0.000
+ CDEP2          0.000
+ CDEP3          0.000
+ CPSCON1        0.000
+ CPSCON2        0.000
+ CPSCON3        0.000
+
+
+           PSI
+              CDEP1         CDEP2         CDEP3         CPSCON1       CPSCON2
+              ________      ________      ________      ________      ________
+ CDEP1          0.050
+ CDEP2          0.000         0.050
+ CDEP3          0.000         0.000         0.050
+ CPSCON1        0.000         0.000         0.000         0.050
+ CPSCON2        0.000         0.000         0.000         0.000         0.050
+ CPSCON3        0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              CPSCON3
+              ________
+ CPSCON3        0.050
+
+
+TECHNICAL 3 OUTPUT
+
+
+           ESTIMATED COVARIANCE MATRIX FOR PARAMETER ESTIMATES
+                  1             2             3             4             5
+              ________      ________      ________      ________      ________
+      1     0.811399D-03
+      2     0.353896D-02  0.917363D-01
+      3     0.378541D-02  0.337957D-01  0.665821D-01
+      4     0.000000D+00  0.000000D+00  0.000000D+00  0.108690D-02
+      5     0.000000D+00  0.000000D+00  0.000000D+00 -0.391136D-02  0.970868D-01
+      6     0.000000D+00  0.000000D+00  0.000000D+00  0.170934D-04 -0.615870D-04
+      7     0.000000D+00  0.000000D+00  0.000000D+00 -0.615870D-04  0.155071D-02
+      8     0.000000D+00  0.000000D+00  0.000000D+00 -0.550311D-17  0.307227D-17
+      9     0.000000D+00  0.000000D+00  0.000000D+00 -0.281247D-17 -0.891755D-16
+     10     0.000000D+00  0.000000D+00  0.000000D+00  0.369470D-17  0.625840D-17
+     11     0.000000D+00  0.000000D+00  0.000000D+00 -0.105668D-18 -0.185717D-17
+     12     0.000000D+00  0.000000D+00  0.000000D+00  0.475458D-20 -0.546839D-19
+     13     0.000000D+00  0.000000D+00  0.000000D+00  0.823281D-19 -0.190607D-17
+     14     0.000000D+00  0.000000D+00  0.000000D+00  0.291839D-20 -0.300515D-19
+     15     0.000000D+00  0.000000D+00  0.000000D+00 -0.208274D-18 -0.117174D-17
+     16     0.000000D+00  0.000000D+00  0.000000D+00 -0.746074D-20 -0.396350D-19
+
+
+           ESTIMATED COVARIANCE MATRIX FOR PARAMETER ESTIMATES
+                  6             7             8             9            10
+              ________      ________      ________      ________      ________
+      6     0.827911D-05
+      7    -0.297905D-04  0.738584D-03
+      8     0.641719D-18 -0.261464D-17  0.723679D+01
+      9    -0.728426D-18  0.373351D-18 -0.568414D-31  0.371088D+01
+     10     0.580879D-19  0.103729D-18 -0.226751D-31 -0.479268D-31  0.388579D+01
+     11     0.833529D-19 -0.807720D-19  0.273993D+00 -0.682922D-32 -0.937513D-33
+     12    -0.167742D-20  0.113083D-18  0.103737D-01 -0.107543D-33 -0.892942D-34
+     13    -0.157385D-19 -0.557296D-18  0.317470D-32  0.448278D-01 -0.414344D-33
+     14     0.190894D-20 -0.343681D-19 -0.629267D-33  0.541525D-03 -0.131002D-35
+     15     0.103415D-19  0.391336D-20  0.281414D-32  0.412561D-32  0.753952D-01
+     16    -0.361552D-20 -0.185954D-19 -0.976064D-33  0.349466D-35  0.146288D-02
+
+
+           ESTIMATED COVARIANCE MATRIX FOR PARAMETER ESTIMATES
+                 11            12            13            14            15
+              ________      ________      ________      ________      ________
+     11     0.430520D-01
+     12     0.286724D-02  0.792487D-03
+     13     0.345676D-33 -0.134510D-34  0.146712D-01
+     14    -0.173625D-33 -0.472671D-34  0.347916D-03  0.223528D-03
+     15     0.388407D-33  0.503570D-34 -0.606880D-34 -0.585652D-36  0.152487D-01
+     16    -0.157789D-33 -0.217709D-34  0.411646D-34  0.513189D-36  0.563352D-03
+
+
+           ESTIMATED COVARIANCE MATRIX FOR PARAMETER ESTIMATES
+                 16
+              ________
+     16     0.216946D-03
+
+
+           ESTIMATED CORRELATION MATRIX FOR PARAMETER ESTIMATES
+                  1             2             3             4             5
+              ________      ________      ________      ________      ________
+      1         1.000
+      2         0.410         1.000
+      3         0.515         0.432         1.000
+      4         0.000         0.000         0.000         1.000
+      5         0.000         0.000         0.000        -0.381         1.000
+      6         0.000         0.000         0.000         0.180        -0.069
+      7         0.000         0.000         0.000        -0.069         0.183
+      8         0.000         0.000         0.000         0.000         0.000
+      9         0.000         0.000         0.000         0.000         0.000
+     10         0.000         0.000         0.000         0.000         0.000
+     11         0.000         0.000         0.000         0.000         0.000
+     12         0.000         0.000         0.000         0.000         0.000
+     13         0.000         0.000         0.000         0.000         0.000
+     14         0.000         0.000         0.000         0.000         0.000
+     15         0.000         0.000         0.000         0.000         0.000
+     16         0.000         0.000         0.000         0.000         0.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR PARAMETER ESTIMATES
+                  6             7             8             9            10
+              ________      ________      ________      ________      ________
+      6         1.000
+      7        -0.381         1.000
+      8         0.000         0.000         1.000
+      9         0.000         0.000         0.000         1.000
+     10         0.000         0.000         0.000         0.000         1.000
+     11         0.000         0.000         0.491         0.000         0.000
+     12         0.000         0.000         0.137         0.000         0.000
+     13         0.000         0.000         0.000         0.192         0.000
+     14         0.000         0.000         0.000         0.019         0.000
+     15         0.000         0.000         0.000         0.000         0.310
+     16         0.000         0.000         0.000         0.000         0.050
+
+
+           ESTIMATED CORRELATION MATRIX FOR PARAMETER ESTIMATES
+                 11            12            13            14            15
+              ________      ________      ________      ________      ________
+     11         1.000
+     12         0.491         1.000
+     13         0.000         0.000         1.000
+     14         0.000         0.000         0.192         1.000
+     15         0.000         0.000         0.000         0.000         1.000
+     16         0.000         0.000         0.000         0.000         0.310
+
+
+           ESTIMATED CORRELATION MATRIX FOR PARAMETER ESTIMATES
+                 16
+              ________
+     16         1.000
+
+
+DIAGRAM INFORMATION
+
+  Use View Diagram under the Diagram menu in the Mplus Editor to view the diagram.
+  If running Mplus from the Mplus Diagrammer, the diagram opens automatically.
+
+  Diagram output
+    c:\users\hamak103\dropbox\onderwijs\rm\sem\2016\lab 3\exercise 3\clpmpc2a.dgm
+
+     Beginning Time:  14:09:37
+        Ending Time:  14:09:37
+       Elapsed Time:  00:00:00
+
+
+Mplus VERSION 7.11 DEMO has the following limitations:
+  Maximum number of dependent variables: 6
+  Maximum number of independent variables: 2
+  Maximum number of between variables: 2
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2013 Muthen & Muthen
