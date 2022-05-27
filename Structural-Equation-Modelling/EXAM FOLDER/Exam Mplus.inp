@@ -1,0 +1,23 @@
+TITLE: 		SEM-Exam;
+
+DATA:		FILE IS reading.dat;
+
+VARIABLE:		NAMES ARE Decod Vocab Read Math Moti IQ;
+
+MODEL:		Decod ON Moti IQ;
+		Vocab ON Moti IQ;
+		Vocab WITH Decod;
+		Read ON Decod Moti IQ Vocab;
+		Math ON Moti IQ Vocab Decod;
+		Read WITH Math;
+		[Moti];
+		[IQ];
+		Moti WITH IQ@0;
+		
+MODEL INDIRECT:	Read IND IQ;
+		Read IND Moti;
+		Math IND IQ;
+		Math IND Moti;
+
+		
+OUTPUT:		SAMPSTAT TECH1;
